@@ -3,6 +3,7 @@ package com.tiagocordeiro.parkingapi.web.controller;
 import com.tiagocordeiro.parkingapi.entity.User;
 import com.tiagocordeiro.parkingapi.service.UserService;
 import com.tiagocordeiro.parkingapi.web.dto.UserCreateDto;
+import com.tiagocordeiro.parkingapi.web.dto.UserPasswordDto;
 import com.tiagocordeiro.parkingapi.web.dto.UserResponseDto;
 import com.tiagocordeiro.parkingapi.web.dto.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,9 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User obj) {
-        User user = service.updatePassword(id, obj.getPassword());
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto objDTO) {
+        User user = service.updatePassword(id, objDTO.getCurrentPassword(), objDTO.getNewPassword(), objDTO.getConfirmPassword());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
