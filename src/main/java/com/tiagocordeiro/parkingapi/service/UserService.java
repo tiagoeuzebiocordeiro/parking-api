@@ -16,4 +16,9 @@ public class UserService {
     public User create(User obj) {
         return repository.save(obj);
     }
+
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("User not found."));
+    }
 }
