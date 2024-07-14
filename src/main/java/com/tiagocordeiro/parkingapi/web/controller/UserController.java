@@ -2,6 +2,9 @@ package com.tiagocordeiro.parkingapi.web.controller;
 
 import com.tiagocordeiro.parkingapi.entity.User;
 import com.tiagocordeiro.parkingapi.service.UserService;
+import com.tiagocordeiro.parkingapi.web.dto.UserCreateDto;
+import com.tiagocordeiro.parkingapi.web.dto.UserResponseDto;
+import com.tiagocordeiro.parkingapi.web.dto.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,9 @@ public class UserController {
     private UserService service;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User obj) {
-        User user = service.create(obj);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserResponseDto> create(@RequestBody UserCreateDto objDto) {
+        User user = service.create(UserMapper.toUser(objDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(user));
     }
 
     @GetMapping("/{id}")
