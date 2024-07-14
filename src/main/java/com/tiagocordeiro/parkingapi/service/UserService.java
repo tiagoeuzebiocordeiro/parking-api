@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 public class UserService {
 
@@ -25,6 +27,9 @@ public class UserService {
     @Transactional
     public User updatePassword(Long id, String password) {
         User user = findById(id);
+        if (Objects.equals(user.getPassword(), password)) {
+            throw new RuntimeException("The new password equals older password.");
+        }
         user.setPassword(password);
         return user;
     }
