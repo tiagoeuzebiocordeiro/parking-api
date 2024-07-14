@@ -6,6 +6,7 @@ import com.tiagocordeiro.parkingapi.web.dto.UserCreateDto;
 import com.tiagocordeiro.parkingapi.web.dto.UserPasswordDto;
 import com.tiagocordeiro.parkingapi.web.dto.UserResponseDto;
 import com.tiagocordeiro.parkingapi.web.dto.mapper.UserMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class UserController {
     private UserService service;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> create(@RequestBody UserCreateDto objDto) {
+    public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto objDto) {
         User user = service.create(UserMapper.toUser(objDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(user));
     }
@@ -33,15 +34,15 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto objDTO) {
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDto objDTO) {
         User user = service.updatePassword(id, objDTO.getCurrentPassword(), objDTO.getNewPassword(), objDTO.getConfirmPassword());
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<UserResponseDto>> getAll() {
         List<User> list = service.getAll();
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(list.stream().map(UserMapper::toDto).toList());
     }
 
 }
