@@ -1,6 +1,7 @@
 package com.tiagocordeiro.parkingapi.web.exception;
 
 import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
+import com.tiagocordeiro.parkingapi.exception.InvalidPasswordException;
 import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -45,4 +46,12 @@ public class ApiExceptionHandler {
 
     }
 
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorMessage> invalidPasswordException(RuntimeException ex,
+                                                                HttpServletRequest request) {
+        log.error("API Error - ", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+
+    }
 }

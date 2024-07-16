@@ -2,6 +2,7 @@ package com.tiagocordeiro.parkingapi.service;
 
 import com.tiagocordeiro.parkingapi.entity.User;
 import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
+import com.tiagocordeiro.parkingapi.exception.InvalidPasswordException;
 import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
 import com.tiagocordeiro.parkingapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,11 @@ public class UserService {
     @Transactional
     public User updatePassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
-            throw new RuntimeException("New password doesn't match with confirm password.");
+            throw new InvalidPasswordException("New password doesn't match with confirm password.");
         }
         User user = findById(id);
         if (!user.getPassword().equals(currentPassword)) {
-            throw new RuntimeException("The current password of this user doesn't match!");
+            throw new InvalidPasswordException("The current password of this user doesn't match!");
         }
         user.setPassword(newPassword);
         return user;
