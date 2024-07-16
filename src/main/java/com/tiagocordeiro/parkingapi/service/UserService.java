@@ -1,8 +1,10 @@
 package com.tiagocordeiro.parkingapi.service;
 
 import com.tiagocordeiro.parkingapi.entity.User;
+import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
 import com.tiagocordeiro.parkingapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,11 @@ public class UserService {
 
     @Transactional
     public User create(User obj) {
-        return repository.save(obj);
+        try {
+            return repository.save(obj);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UsernameUniqueViolationException(String.format("Username [%s] already registered.", obj.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
