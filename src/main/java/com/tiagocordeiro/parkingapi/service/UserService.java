@@ -1,6 +1,7 @@
 package com.tiagocordeiro.parkingapi.service;
 
 import com.tiagocordeiro.parkingapi.entity.User;
+import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
 import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
 import com.tiagocordeiro.parkingapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("User not found."));
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("User of id = %s not found.",id)));
     }
 
     @Transactional
