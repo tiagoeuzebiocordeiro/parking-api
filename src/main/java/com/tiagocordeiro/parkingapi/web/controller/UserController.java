@@ -8,6 +8,7 @@ import com.tiagocordeiro.parkingapi.web.dto.UserResponseDto;
 import com.tiagocordeiro.parkingapi.web.dto.mapper.UserMapper;
 import com.tiagocordeiro.parkingapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,6 +74,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "List all available users", description = "Resource for get all users", responses = {
+            @ApiResponse(responseCode = "200", description = "List with all registered users",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class))))
+    })
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAll() {
         List<User> list = service.getAll();
