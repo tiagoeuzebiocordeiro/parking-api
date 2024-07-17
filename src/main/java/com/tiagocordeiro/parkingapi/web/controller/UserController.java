@@ -6,6 +6,12 @@ import com.tiagocordeiro.parkingapi.web.dto.UserCreateDto;
 import com.tiagocordeiro.parkingapi.web.dto.UserPasswordDto;
 import com.tiagocordeiro.parkingapi.web.dto.UserResponseDto;
 import com.tiagocordeiro.parkingapi.web.dto.mapper.UserMapper;
+import com.tiagocordeiro.parkingapi.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Users", description = "Contains all relative resource operations for create, update and read an user.")
 @RestController
 @RequestMapping("api/v1/users")
 public class UserController {
@@ -21,6 +28,15 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Operation(summary = "Create a new user",
+            description = "Resource for user creation",
+            responses = {@ApiResponse(responseCode = "201", description = "User created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "409", description = "E-mail already registered.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Resource cannot be processed because there is a invalid input data information."
+                            , content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto objDto) {
         User user = service.create(UserMapper.toUser(objDto));
