@@ -1,9 +1,11 @@
 package com.tiagocordeiro.parkingapi.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class SpringdocOpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI().info(
+        return new OpenAPI().components(new Components().addSecuritySchemes("security", securityScheme())).info(
                 new Info().title("REST API - Spring Parking")
                         .description("API for car parking management")
                         .version("v1")
@@ -19,4 +21,11 @@ public class SpringdocOpenApiConfig {
                         .contact(new Contact().name("Tiago Cordeiro").email("tiagoeuzebiocordeiro.ti@gmail.com"))
         );
     }
+
+    private SecurityScheme securityScheme() {
+        return new SecurityScheme()
+                .description("Insert a valid bearer token").type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER).scheme("bearer").bearerFormat("JWT").name("security");
+    }
+
 }
