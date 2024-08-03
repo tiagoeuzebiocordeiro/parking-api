@@ -5,6 +5,6 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter
 public class CustomerResponseDto {
     private Long id;
-    private String nome;
+    private String name;
     private String cpf;
 }
