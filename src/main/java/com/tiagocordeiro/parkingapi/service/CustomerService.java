@@ -1,6 +1,7 @@
 package com.tiagocordeiro.parkingapi.service;
 
 import com.tiagocordeiro.parkingapi.entity.Customer;
+import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
 import com.tiagocordeiro.parkingapi.exception.UniqueCpfViolationException;
 import com.tiagocordeiro.parkingapi.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,4 +28,10 @@ public class CustomerService {
     }
 
 
+    @Transactional(readOnly = true)
+    public Customer findById(Long id) {
+        return customerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format(
+                "Customer of id=%s not found", id
+        )));
+    }
 }
