@@ -2,6 +2,7 @@ package com.tiagocordeiro.parkingapi.web.exception;
 
 import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
 import com.tiagocordeiro.parkingapi.exception.InvalidPasswordException;
+import com.tiagocordeiro.parkingapi.exception.UniqueCpfViolationException;
 import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class ApiExceptionHandler {
 
     }
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
+    @ExceptionHandler({UsernameUniqueViolationException.class, UniqueCpfViolationException.class})
     public ResponseEntity<ErrorMessage> usernameUniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("API Error - ", ex);
