@@ -120,4 +120,32 @@ public class CustomerIT {
 
     }
 
+    @Test
+    public void findCustomer_WithANonExistentIdRecoveredByAdminRole_Returns404ErrorMessage() {
+        ErrorMessage responseBody = testClient.get()
+                .uri("/api/v1/customers/22")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,
+                        "test1@mail.com", "123456"))
+                .exchange().expectStatus().isNotFound().expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+    }
+
+    @Test
+    public void findCustomer_WithAnExistentIdRecoveredByCustomerRole_Returns403ErrorMessage() {
+        ErrorMessage responseBody = testClient.get()
+                .uri("/api/v1/customers/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient,
+                        "test2@mail.com", "123456"))
+                .exchange().expectStatus().isForbidden().expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
+    }
+
 }
