@@ -49,7 +49,18 @@ public class CustomerController {
         return ResponseEntity.status(201).body(CustomerMapper.toDto(customer));
     }
 
+    @Operation(summary = "Find a customer", description = "Resource for find a customer by id " +
+            "Requests needs a bearer token usage. Restrict access for ADMIN role.", responses = {
+            @ApiResponse(responseCode = "201", description = "Resource successfully located",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomerResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Customer not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "403", description = "Resource not authorized for CUSTOMER role", content =
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomerResponseDto> getById(@PathVariable Long id) {
         Customer customer = customerService.findById(id);
         return ResponseEntity.ok().body(CustomerMapper.toDto(customer));
