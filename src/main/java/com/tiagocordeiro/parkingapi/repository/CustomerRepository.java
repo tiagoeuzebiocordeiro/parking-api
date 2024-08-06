@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT * FROM TB_CUSTOMERS", nativeQuery = true)
     Page<CustomerProjection> findAllPageable(Pageable pageable);
+
+    Customer findByUserId(Long id);
 }
