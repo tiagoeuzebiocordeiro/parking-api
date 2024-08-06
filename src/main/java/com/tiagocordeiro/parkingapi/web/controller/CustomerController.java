@@ -119,6 +119,14 @@ public class CustomerController {
         return ResponseEntity.ok().body(PageableMapper.toDto(list));
     }
 
+    @Operation(summary = "Restores authenticated customer's data", description =
+    "Requests needs a bearer token usage. Restrict access to Role='CUSTOMER'", security =
+    @SecurityRequirement(name = "security"), responses = {
+            @ApiResponse(responseCode = "200", description = "Restored successfully",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Resource not authorized for 'ADMIN' Role", content =
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/details")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<CustomerResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails) {
