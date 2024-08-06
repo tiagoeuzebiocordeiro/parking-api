@@ -2,6 +2,7 @@ package com.tiagocordeiro.parkingapi;
 
 import com.tiagocordeiro.parkingapi.web.dto.CustomerCreateDto;
 import com.tiagocordeiro.parkingapi.web.dto.CustomerResponseDto;
+import com.tiagocordeiro.parkingapi.web.dto.PageableDto;
 import com.tiagocordeiro.parkingapi.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,55 @@ public class CustomerIT {
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient,
                         "test2@mail.com", "123456"))
                 .exchange().expectStatus().isForbidden().expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
+    }
+
+    @Test
+    public void searchCustomers_WithPageableUsingAdminRole_ReturnsStatus200() {
+        PageableDto responseBody = testClient
+                .get()
+                .uri("/api/v1/customers")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "test1@mail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(1);
+
+
+        responseBody = testClient
+                .get()
+                .uri("/api/v1/customers?size=1&page=1")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "test1@mail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+
+    }
+
+    @Test
+    public void searchCustomers_WithPageableUsingCustomerRole_ReturnsStatus403() {
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "test2@mail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
                 .returnResult().getResponseBody();
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
