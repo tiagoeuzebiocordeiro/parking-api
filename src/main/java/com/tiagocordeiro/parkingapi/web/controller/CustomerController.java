@@ -2,22 +2,30 @@ package com.tiagocordeiro.parkingapi.web.controller;
 
 import com.tiagocordeiro.parkingapi.entity.Customer;
 import com.tiagocordeiro.parkingapi.jwt.JwtUserDetails;
+import com.tiagocordeiro.parkingapi.repository.projection.CustomerProjection;
 import com.tiagocordeiro.parkingapi.service.CustomerService;
 import com.tiagocordeiro.parkingapi.service.UserService;
 import com.tiagocordeiro.parkingapi.web.dto.CustomerCreateDto;
 import com.tiagocordeiro.parkingapi.web.dto.CustomerResponseDto;
+import com.tiagocordeiro.parkingapi.web.dto.PageableDto;
 import com.tiagocordeiro.parkingapi.web.dto.mapper.CustomerMapper;
+import com.tiagocordeiro.parkingapi.web.dto.mapper.PageableMapper;
 import com.tiagocordeiro.parkingapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/customers")
@@ -64,6 +72,13 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDto> getById(@PathVariable Long id) {
         Customer customer = customerService.findById(id);
         return ResponseEntity.ok().body(CustomerMapper.toDto(customer));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAll(Pageable pageable) {
+        Page<CustomerProjection> list = customerService.findAll(pageable);
+        return ResponseEntity.ok().body(PageableMapper.toDto(list));
     }
 
 }
