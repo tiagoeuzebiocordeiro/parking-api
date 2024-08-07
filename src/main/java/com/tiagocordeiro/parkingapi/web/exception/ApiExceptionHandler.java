@@ -1,9 +1,6 @@
 package com.tiagocordeiro.parkingapi.web.exception;
 
-import com.tiagocordeiro.parkingapi.exception.EntityNotFoundException;
-import com.tiagocordeiro.parkingapi.exception.InvalidPasswordException;
-import com.tiagocordeiro.parkingapi.exception.UniqueCpfViolationException;
-import com.tiagocordeiro.parkingapi.exception.UsernameUniqueViolationException;
+import com.tiagocordeiro.parkingapi.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,8 +27,8 @@ public class ApiExceptionHandler {
 
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, UniqueCpfViolationException.class})
-    public ResponseEntity<ErrorMessage> usernameUniqueViolationException(RuntimeException ex,
+    @ExceptionHandler({UsernameUniqueViolationException.class, UniqueCpfViolationException.class, UniqueSpotCodeViolationException.class})
+    public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request) {
         log.error("API Error - ", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON)
