@@ -48,6 +48,15 @@ public class SpotIT {
     }
 
     @Test
+    public void createSpot_UsingCustomerRole_ReturnsErrorMessage403() {
+        testClient.post().uri("/api/v1/spots").contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "test2@mail.com", "123456"))
+                .bodyValue(new SpotCreateDto("A-06", "FREE")).exchange().expectStatus().isForbidden()
+                .expectBody().jsonPath("path").isEqualTo("/api/v1/spots")
+                .jsonPath("method").isEqualTo("POST").jsonPath("status").isEqualTo(403);
+    }
+
+    @Test
     public void findSpot_WithAnExistentCode_ReturnsSpot200() {
         testClient.get().uri("/api/v1/spots/{code}", "A-01")
                 .headers(JwtAuthentication.getHeaderAuthorization(
@@ -65,4 +74,13 @@ public class SpotIT {
                 .isEqualTo("GET").jsonPath("path").isEqualTo("/api/v1/spots/A-10");
     }
 
+    @Test
+    public void findSpotByCode_UsingCustomerRoleProfile_Returns403ErrorMessage() {
+        testClient.get().uri("/api/v1/spots/{code}", "A-10")
+                .headers(JwtAuthentication.getHeaderAuthorization(
+                        testClient, "test2@mail.com", "123456")).exchange().expectStatus().isForbidden()
+                .expectBody().jsonPath("path").isEqualTo("/api/v1/spots/A-10")
+                .jsonPath("method").isEqualTo("GET")
+                .jsonPath("status").isEqualTo(403);
+    }
 }
