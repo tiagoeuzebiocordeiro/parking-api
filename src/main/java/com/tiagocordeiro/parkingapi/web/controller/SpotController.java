@@ -33,7 +33,9 @@ public class SpotController {
     private SpotService spotService;
 
     @Operation(summary = "Create a new spot", description = "Resource for spot creation. Requests" +
-            "need a bearer token usage. Restrict access for 'ADMIN' Role.", responses = {
+            "need a bearer token usage. Restrict access for 'ADMIN' Role.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
             @ApiResponse(responseCode = "201", description = "Resource created successfully", headers = @Header(name =
                     HttpHeaders.LOCATION, description = "Resource's Creation URL")),
             @ApiResponse(responseCode = "409", description = "Spot already registered", content =
