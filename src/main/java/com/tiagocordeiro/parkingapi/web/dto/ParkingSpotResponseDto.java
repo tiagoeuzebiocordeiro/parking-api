@@ -1,5 +1,7 @@
 package com.tiagocordeiro.parkingapi.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParkingSpotResponseDto {
 
     private String licensePlate;
@@ -22,8 +25,9 @@ public class ParkingSpotResponseDto {
 
     private String receipt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime entryDate;
-
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime exitDate;
 
     private String spotCode; /*Model mapper understand: code from Spot object*/
