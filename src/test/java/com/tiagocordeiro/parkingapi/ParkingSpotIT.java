@@ -65,4 +65,20 @@ public class ParkingSpotIT {
 
     }
 
+    @Test
+    public void createCheckIn_WithNonExistentCpf_ReturnsErrorStatus404() {
+        ParkingSpotCreateDto createDto = ParkingSpotCreateDto.builder()
+                .licensePlate("WER-1111").brand("FIAT").model("PALIO 1.0").color("BLUE").customerCpf("07179000099")
+                .build();
+
+        testClient.post().uri("api/v1/parking-spots/check-in").contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com.br", "123456"))
+                .bodyValue(createDto).exchange().expectStatus().isNotFound().expectHeader().exists(HttpHeaders.LOCATION)
+                .expectBody().jsonPath("licensePlate").isEqualTo("WER-1111")
+                .jsonPath("brand").isEqualTo("FIAT").jsonPath("model").isEqualTo("PALIO 1.0")
+                .jsonPath("color").isEqualTo("BLUE").jsonPath("customerCpf").isEqualTo("09191773016")
+                .jsonPath("receipt").exists().jsonPath("entryDate").exists().jsonPath("spotCode").exists();
+
+    }
+
 }
